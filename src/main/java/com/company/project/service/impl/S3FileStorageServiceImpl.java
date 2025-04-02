@@ -34,7 +34,8 @@ public class S3FileStorageServiceImpl implements FileStorageService {
     @Override
     public String storeFile(MultipartFile file) {
         // Normalize file name
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String originalFilename = file.getOriginalFilename();
+        String fileName = originalFilename != null ? StringUtils.cleanPath(originalFilename) : "unknown_filename";
         
         try {
             // Check if the file's name contains invalid characters

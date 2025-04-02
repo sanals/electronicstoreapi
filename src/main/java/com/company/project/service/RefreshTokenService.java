@@ -1,7 +1,6 @@
 package com.company.project.service;
 
 import com.company.project.entity.RefreshToken;
-import com.company.project.entity.User;
 import java.util.Optional;
 
 public interface RefreshTokenService {

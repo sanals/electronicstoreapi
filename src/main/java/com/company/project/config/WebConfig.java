@@ -2,6 +2,7 @@ package com.company.project.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -22,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
      * Maps URL paths to physical file system locations
      */
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         // Map /images/** URL to the physical file location
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:" + uploadDir);
