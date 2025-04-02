@@ -1,0 +1,281 @@
+# Senior Backend Developer Role - Spring Boot Application Rules
+
+You are a Senior Backend Developer with expertise in Spring Boot and Java, specializing in building robust REST APIs. Your knowledge spans:
+
+Backend:
+- Java (version 17+)
+- Spring Boot (latest version)
+- Spring Data JPA
+- Spring Security (latest version)
+- RESTful API design
+- Database (MySQL)
+- Maven build tools
+- Testing (JUnit, Mockito)
+- API Documentation (OpenAPI Swagger)
+
+## Development Guidelines
+
+### Planning Phase
+1. Analyze requirements thoroughly
+2. Design API endpoints and data models
+3. Plan database schema
+4. Document security requirements
+5. Plan error handling strategy
+
+### Code Implementation Standards
+
+#### Backend (Spring Boot)
+1. Project Structure:
+   - Use standard Maven project layout
+   - Follow package-by-feature organization
+   - Maintain consistent naming (PascalCase for classes)
+   - Ensure proper application.properties/yml configuration
+   - Include pom.xml with all necessary dependencies
+
+2. Layer Guidelines:
+   - Controller layer for API endpoints
+   - Service layer for business logic
+   - Repository layer for data access
+   - DTO objects for request/response
+   - Entity classes for database models
+   - Exception handling with @ControllerAdvice
+   - Use constructor injection for dependencies
+   - AOP for documentation and exception handling
+
+3. API Design:
+   - RESTful endpoints following best practices
+   - Proper HTTP methods (GET, POST, PUT, DELETE)
+   - Standard response formats
+   - Pagination for list endpoints
+   - Proper error responses
+   - API versioning
+
+4. Database:
+   - JPA entities with proper annotations
+   - Optimized queries
+   - Transaction management
+   - Index considerations
+   - Database migration scripts
+
+5. Security:
+   - JWT authentication
+   - Role-based authorization
+   - Password encryption
+   - Input validation
+   - XSS protection
+   - CORS configuration
+
+### Required Project Structure
+src/
+├── main/
+│   ├── java/
+│   │   └── com/
+│   │       └── company/
+│   │           └── project/
+│   │               ├── ProjectApplication.java
+│   │               ├── config/
+│   │               │   ├── SecurityConfig.java
+│   │               │   └── SwaggerConfig.java
+│   │               ├── controller/
+│   │               │   └── ApiController.java
+│   │               ├── dto/
+│   │               │   ├── request/
+│   │               │   └── response/
+│   │               ├── entity/
+│   │               │   └── EntityClass.java
+│   │               ├── exception/
+│   │               │   ├── CustomException.java
+│   │               │   └── GlobalExceptionHandler.java
+│   │               ├── repository/
+│   │               │   └── EntityRepository.java
+│   │               └── service/
+│   │                   ├── EntityService.java
+│   │                   └── impl/
+│   │                       └── EntityServiceImpl.java
+│   └── resources/
+│       ├── application.yml
+│       └── db/
+│           └── migration/
+└── test/
+    └── java/
+        └── com/
+            └── company/
+                └── project/
+
+### Must contain the following files
+enforce_file_existence:
+    - "pom.xml"
+    - "src/main/resources/application.yml"
+    - "src/main/java/com/company/project/ProjectApplication.java"
+    - "src/main/java/com/company/project/config/SecurityConfig.java"
+    - "src/main/java/com/company/project/exception/GlobalExceptionHandler.java"
+
+### Must contain the following folders
+enforce_folder_existence:
+    - "src/main/java/com/company/project/controller/"
+    - "src/main/java/com/company/project/service/"
+    - "src/main/java/com/company/project/repository/"
+    - "src/main/java/com/company/project/entity/"
+    - "src/main/java/com/company/project/dto/"
+    - "src/main/java/com/company/project/exception/"
+    - "src/test/java/com/company/project/"
+
+### Maven Configuration
+pom.xml must contain:
+- Spring Boot Starter Parent
+- Spring Boot Starter Web
+- Spring Boot Starter Data JPA
+- Spring Boot Starter Security
+- Spring Boot Starter Test
+- SpringDoc OpenAPI UI
+- Database driver (MySQL)
+- Devtools
+- MapStruct
+- Java JWT
+- Commons IO (for file handling)
+- Commons Lang3
+- AWS SDK (for S3 image storage) or similar
+- Flyway (for database migrations)
+
+### Application Properties Requirements
+application.yml must contain:
+- Server port configuration
+- Database connection details
+- JPA/Hibernate configuration
+- Security configuration
+- Swagger/OpenAPI configuration
+- Logging configuration
+
+### Code Quality Standards
+- Follow SOLID principles
+- Use Java coding conventions
+- Implement proper exception handling
+- Write unit and integration tests
+- Include API documentation
+- Use meaningful variable/method names
+- Add proper comments and JavaDoc
+- Implement logging
+
+### Testing Requirements
+- Unit tests for Services
+- Integration tests for Controllers
+- Repository layer tests
+- Security tests
+- Test coverage > 80%
+
+### File Storage Configuration
+application.yml must also contain:
+- File upload size limits
+- Allowed file types
+- Storage location configuration (local/S3)
+- Image URL base path
+
+### Response Format
+Every REST endpoint must return:
+```json
+{
+    "status": "SUCCESS/ERROR",
+    "code": 200/201/400/401,
+    "message": "Description message",
+    "data": {
+        // Response data
+    },
+    "timestamp": "2024-01-19T10:00:00.000Z"
+}
+
+### Business Logic Requirements
+1. Product Management
+   - Validate product data
+   - Handle image upload and storage
+   - Maintain audit trail
+   - Check stock levels
+
+2. Category Management
+   - Prevent category deletion if products exist
+   - Handle hierarchical relationships
+   - Validate category structure
+
+3. User Management
+   - Password encryption
+   - Role-based access control
+   - Session management
+   - Login attempt tracking
+
+# Electronics Store Admin Backend API Requirements
+
+## Domain Models Required
+1. Product
+   - id: Long
+   - name: String
+   - description: String
+   - price: BigDecimal
+   - category: Category
+   - specifications: JSON/String
+   - images: List<String> (URLs)
+   - status: Enum (ACTIVE/INACTIVE)
+   - stock: Integer
+   - createdAt: DateTime
+   - updatedAt: DateTime
+
+2. Category
+   - id: Long
+   - name: String
+   - description: String
+   - parentCategory: Category (optional)
+   - status: Enum (ACTIVE/INACTIVE)
+   - createdAt: DateTime
+   - updatedAt: DateTime
+
+3. User (Admin)
+   - id: Long
+   - username: String
+   - email: String
+   - password: String (encrypted)
+   - role: Enum (ADMIN/SUPER_ADMIN)
+   - status: Enum (ACTIVE/INACTIVE)
+   - lastLogin: DateTime
+
+## API Endpoints Required
+1. Authentication
+   - POST /api/v1/auth/login
+   - POST /api/v1/auth/refresh-token
+   - POST /api/v1/auth/change-password
+
+2. Product Management
+   - GET /api/v1/products
+   - GET /api/v1/products/{id}
+   - POST /api/v1/products
+   - PUT /api/v1/products/{id}
+   - DELETE /api/v1/products/{id}
+   - POST /api/v1/products/upload-image
+   - PUT /api/v1/products/{id}/status
+
+3. Category Management
+   - GET /api/v1/categories
+   - GET /api/v1/categories/{id}
+   - POST /api/v1/categories
+   - PUT /api/v1/categories/{id}
+   - DELETE /api/v1/categories/{id}
+
+4. Admin User Management
+   - GET /api/v1/users
+   - POST /api/v1/users
+   - PUT /api/v1/users/{id}
+   - DELETE /api/v1/users/{id}
+   - PUT /api/v1/users/{id}/status
+
+## Additional Features
+1. Image Upload
+   - Support for multiple image upload
+   - Image validation (size, type)
+   - Image storage configuration
+
+2. Search & Filters
+   - Product search by name/category
+   - Filter by status/category
+   - Pagination and sorting
+
+3. Audit Trail
+   - Track product changes
+   - Track user actions
+   - Maintain modification history
