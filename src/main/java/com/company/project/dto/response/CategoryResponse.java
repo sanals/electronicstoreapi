@@ -18,6 +18,7 @@ public class CategoryResponse {
     private Long id;
     private String name;
     private String description;
+    private String imageUrl;
     private CategorySummary parentCategory;
     private List<CategorySummary> subCategories;
     private List<ProductSummary> products;
@@ -35,6 +36,7 @@ public class CategoryResponse {
         private Long id;
         private String name;
         private String description;
+        private String imageUrl;
     }
 
     @Data
@@ -52,10 +54,12 @@ public class CategoryResponse {
                 .id(category.getId())
                 .name(category.getName())
                 .description(category.getDescription())
+                .imageUrl(category.getImageUrl())
                 .parentCategory(category.getParentCategory() != null ? CategorySummary.builder()
                         .id(category.getParentCategory().getId())
                         .name(category.getParentCategory().getName())
                         .description(category.getParentCategory().getDescription())
+                        .imageUrl(category.getParentCategory().getImageUrl())
                         .build() : null)
                 .subCategories(category.getSubCategories() != null ? 
                         category.getSubCategories().stream()
@@ -63,6 +67,7 @@ public class CategoryResponse {
                                         .id(subCategory.getId())
                                         .name(subCategory.getName())
                                         .description(subCategory.getDescription())
+                                        .imageUrl(subCategory.getImageUrl())
                                         .build())
                                 .collect(Collectors.toList()) : null)
                 .products(category.getProducts() != null ?

@@ -12,6 +12,8 @@ Backend:
 - Maven build tools
 - Testing (JUnit, Mockito)
 - API Documentation (OpenAPI Swagger)
+- AWS S3 Integration
+- Email Service
 
 ## Development Guidelines
 
@@ -41,6 +43,7 @@ Backend:
    - Exception handling with @ControllerAdvice
    - Use constructor injection for dependencies
    - AOP for documentation and exception handling
+   - Security package for JWT implementation
 
 3. API Design:
    - RESTful endpoints following best practices
@@ -64,6 +67,7 @@ Backend:
    - Input validation
    - XSS protection
    - CORS configuration
+   - JWT token refresh mechanism
 
 ### Required Project Structure
 src/
@@ -75,23 +79,64 @@ src/
 │   │               ├── ProjectApplication.java
 │   │               ├── config/
 │   │               │   ├── SecurityConfig.java
-│   │               │   └── SwaggerConfig.java
+│   │               │   ├── WebConfig.java
+│   │               │   ├── ApplicationConfig.java
+│   │               │   ├── EmailConfig.java
+│   │               │   ├── JacksonConfig.java
+│   │               │   ├── AwsS3Config.java
+│   │               │   └── AuditConfig.java
 │   │               ├── controller/
-│   │               │   └── ApiController.java
+│   │               │   ├── AuthController.java
+│   │               │   ├── CategoryController.java
+│   │               │   ├── HealthController.java
+│   │               │   ├── ProductController.java
+│   │               │   └── UserController.java
 │   │               ├── dto/
 │   │               │   ├── request/
+│   │               │   │   ├── CategoryRequest.java
+│   │               │   │   ├── CreateUserRequest.java
+│   │               │   │   ├── LoginRequest.java
+│   │               │   │   ├── PasswordChangeRequest.java
+│   │               │   │   ├── ProductCreateRequest.java
+│   │               │   │   ├── ProductRequest.java
+│   │               │   │   └── TokenRefreshRequest.java
 │   │               │   └── response/
+│   │               │       ├── ApiResponse.java
+│   │               │       ├── AuthResponse.java
+│   │               │       ├── CategoryResponse.java
+│   │               │       ├── ProductResponse.java
+│   │               │       └── TokenRefreshResponse.java
 │   │               ├── entity/
-│   │               │   └── EntityClass.java
+│   │               │   ├── Auditable.java
+│   │               │   ├── Category.java
+│   │               │   ├── PasswordResetToken.java
+│   │               │   ├── Product.java
+│   │               │   ├── RefreshToken.java
+│   │               │   └── User.java
 │   │               ├── exception/
-│   │               │   ├── CustomException.java
-│   │               │   └── GlobalExceptionHandler.java
+│   │               │   ├── FileStorageException.java
+│   │               │   ├── GlobalExceptionHandler.java
+│   │               │   ├── ResourceNotFoundException.java
+│   │               │   ├── TokenRefreshException.java
+│   │               │   └── UserAlreadyExistsException.java
 │   │               ├── repository/
-│   │               │   └── EntityRepository.java
-│   │               └── service/
-│   │                   ├── EntityService.java
-│   │                   └── impl/
-│   │                       └── EntityServiceImpl.java
+│   │               │   ├── CategoryRepository.java
+│   │               │   ├── PasswordResetTokenRepository.java
+│   │               │   ├── ProductRepository.java
+│   │               │   ├── RefreshTokenRepository.java
+│   │               │   └── UserRepository.java
+│   │               ├── security/
+│   │               │   ├── JwtService.java
+│   │               │   ├── JwtServiceImpl.java
+│   │               │   ├── JwtAuthenticationFilter.java
+│   │               │   ├── AuthEntryPointJwt.java
+│   │               │   └── UserDetailsServiceImpl.java
+│   │               ├── service/
+│   │               │   ├── EntityService.java
+│   │               │   └── impl/
+│   │               │       └── EntityServiceImpl.java
+│   │               └── util/
+│   │                   └── HelperClass.java
 │   └── resources/
 │       ├── application.yml
 │       └── db/
@@ -109,6 +154,13 @@ enforce_file_existence:
     - "src/main/java/com/company/project/ProjectApplication.java"
     - "src/main/java/com/company/project/config/SecurityConfig.java"
     - "src/main/java/com/company/project/exception/GlobalExceptionHandler.java"
+    - "src/main/java/com/company/project/security/JwtServiceImpl.java"
+    - "src/main/java/com/company/project/security/JwtAuthenticationFilter.java"
+    - "src/main/java/com/company/project/controller/AuthController.java"
+    - "src/main/java/com/company/project/controller/ProductController.java"
+    - "src/main/java/com/company/project/entity/User.java"
+    - "src/main/java/com/company/project/entity/Product.java"
+    - "src/main/java/com/company/project/entity/RefreshToken.java"
 
 ### Must contain the following folders
 enforce_folder_existence:
@@ -118,7 +170,10 @@ enforce_folder_existence:
     - "src/main/java/com/company/project/entity/"
     - "src/main/java/com/company/project/dto/"
     - "src/main/java/com/company/project/exception/"
+    - "src/main/java/com/company/project/security/"
+    - "src/main/java/com/company/project/util/"
     - "src/test/java/com/company/project/"
+    - "uploads/images/"
 
 ### Maven Configuration
 pom.xml must contain:
@@ -126,25 +181,31 @@ pom.xml must contain:
 - Spring Boot Starter Web
 - Spring Boot Starter Data JPA
 - Spring Boot Starter Security
+- Spring Boot Starter Validation
+- Spring Boot Starter Mail
 - Spring Boot Starter Test
 - SpringDoc OpenAPI UI
 - Database driver (MySQL)
-- Devtools
-- MapStruct
-- Java JWT
-- Commons IO (for file handling)
-- Commons Lang3
-- AWS SDK (for S3 image storage) or similar
-- Flyway (for database migrations)
+- H2 Database (for testing)
+- Lombok
+- JWT API & Implementation
+- AWS SDK for S3
+- Jackson Datatype JSR310
 
 ### Application Properties Requirements
 application.yml must contain:
 - Server port configuration
+- Context path configuration
 - Database connection details
 - JPA/Hibernate configuration
 - Security configuration
+- JWT configuration (secret, expiration times)
 - Swagger/OpenAPI configuration
 - Logging configuration
+- File upload configuration
+- AWS S3 configuration
+- Email service configuration
+- Application base URL
 
 ### Code Quality Standards
 - Follow SOLID principles
@@ -162,6 +223,7 @@ application.yml must contain:
 - Repository layer tests
 - Security tests
 - Test coverage > 80%
+- H2 in-memory database for tests
 
 ### File Storage Configuration
 application.yml must also contain:
@@ -169,6 +231,7 @@ application.yml must also contain:
 - Allowed file types
 - Storage location configuration (local/S3)
 - Image URL base path
+- AWS S3 credentials and configuration
 
 ### Response Format
 Every REST endpoint must return:
@@ -182,6 +245,7 @@ Every REST endpoint must return:
     },
     "timestamp": "2024-01-19T10:00:00.000Z"
 }
+```
 
 ### Business Logic Requirements
 1. Product Management
@@ -200,6 +264,8 @@ Every REST endpoint must return:
    - Role-based access control
    - Session management
    - Login attempt tracking
+   - Refresh token management
+   - Email notifications
 
 # Electronics Store Admin Backend API Requirements
 
@@ -216,6 +282,7 @@ Every REST endpoint must return:
    - stock: Integer
    - createdAt: DateTime
    - updatedAt: DateTime
+   - Implements Auditable base class
 
 2. Category
    - id: Long
@@ -225,6 +292,7 @@ Every REST endpoint must return:
    - status: Enum (ACTIVE/INACTIVE)
    - createdAt: DateTime
    - updatedAt: DateTime
+   - Implements Auditable base class
 
 3. User (Admin)
    - id: Long
@@ -235,40 +303,78 @@ Every REST endpoint must return:
    - status: Enum (ACTIVE/INACTIVE)
    - lastLogin: DateTime
 
+4. RefreshToken
+   - id: Long
+   - token: String
+   - user: User
+   - expiryDate: DateTime
+   - isRevoked: Boolean
+
+5. PasswordResetToken
+   - id: Long
+   - token: String
+   - user: User
+   - expiryDate: DateTime
+
+## Data Transfer Objects (DTOs)
+1. Request DTOs
+   - LoginRequest (username, password)
+   - TokenRefreshRequest (refreshToken)
+   - PasswordChangeRequest (oldPassword, newPassword)
+   - ProductRequest (product details for update)
+   - ProductCreateRequest (product details for creation)
+   - CategoryRequest (category details)
+   - CreateUserRequest (user creation details)
+
+2. Response DTOs
+   - ApiResponse (standard response wrapper)
+   - AuthResponse (login response with tokens)
+   - TokenRefreshResponse (new access token)
+   - ProductResponse (product details)
+   - CategoryResponse (category details with hierarchy)
+
 ## API Endpoints Required
 1. Authentication
-   - POST /api/v1/auth/login
-   - POST /api/v1/auth/refresh-token
-   - POST /api/v1/auth/change-password
+   - POST /api/v1/auth/login (authenticate user)
+   - POST /api/v1/auth/refresh-token (get new access token)
+   - POST /api/v1/auth/logout (invalidate tokens)
+   - POST /api/v1/auth/change-password (change user password)
+   - POST /api/v1/auth/forgot-password (send password reset email)
+   - POST /api/v1/auth/reset-password (reset password with token)
 
 2. Product Management
-   - GET /api/v1/products
-   - GET /api/v1/products/{id}
-   - POST /api/v1/products
-   - PUT /api/v1/products/{id}
-   - DELETE /api/v1/products/{id}
-   - POST /api/v1/products/upload-image
-   - PUT /api/v1/products/{id}/status
+   - GET /api/v1/products (get all products with filtering and pagination)
+   - GET /api/v1/products/{id} (get product by id)
+   - POST /api/v1/products (create product)
+   - PUT /api/v1/products/{id} (update product)
+   - DELETE /api/v1/products/{id} (delete product)
+   - POST /api/v1/products/upload-image (upload standalone images)
+   - POST /api/v1/products/{id}/upload-images (upload images for a product)
+   - PUT /api/v1/products/{id}/status (update product status)
+   - GET /api/v1/products/low-stock (get products with low stock)
+   - POST /api/v1/products/with-images (create product with images)
+   - PUT /api/v1/products/{id}/with-images (update product with images)
 
 3. Category Management
-   - GET /api/v1/categories
-   - GET /api/v1/categories/{id}
-   - POST /api/v1/categories
-   - PUT /api/v1/categories/{id}
-   - DELETE /api/v1/categories/{id}
+   - GET /api/v1/categories (get all categories)
+   - GET /api/v1/categories/{id} (get category by id)
+   - POST /api/v1/categories (create category)
+   - PUT /api/v1/categories/{id} (update category)
+   - DELETE /api/v1/categories/{id} (delete category)
 
-4. Admin User Management
-   - GET /api/v1/users
-   - POST /api/v1/users
-   - PUT /api/v1/users/{id}
-   - DELETE /api/v1/users/{id}
-   - PUT /api/v1/users/{id}/status
+4. User Management
+   - POST /api/v1/users/create (create new user)
+   - GET /api/v1/users (get all users)
+
+5. Health Monitoring
+   - GET /api/v1/health (basic health check)
+   - GET /api/v1/health/info (detailed health information)
 
 ## Additional Features
 1. Image Upload
    - Support for multiple image upload
    - Image validation (size, type)
-   - Image storage configuration
+   - Image storage configuration (local or S3)
 
 2. Search & Filters
    - Product search by name/category
@@ -279,3 +385,8 @@ Every REST endpoint must return:
    - Track product changes
    - Track user actions
    - Maintain modification history
+
+4. Email Notifications
+   - Password reset emails
+   - Account notifications
+   - Order status updates

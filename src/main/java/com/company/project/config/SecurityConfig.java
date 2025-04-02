@@ -120,6 +120,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints that don't require authentication
                         .requestMatchers("/auth/**").permitAll()
+                        // Customer-facing product and category endpoints
+                        .requestMatchers("/products/**").permitAll()
+                        .requestMatchers("/categories/**").permitAll()
                         // No longer need Swagger UI permissions
                         .requestMatchers("/users/create").permitAll()
                         // Health check endpoints
